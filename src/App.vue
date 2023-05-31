@@ -2,14 +2,29 @@
   <div class="brand-todo">
     <div class="title has-text-centered">Brand Todo</div>
 
-    <div class="field is-grouped mb-5">
-      <p class="control is-expanded">
-        <input class="input" type="text" placeholder="Add a todo" />
-      </p>
-      <p class="control">
-        <a class="button is-info"> Add </a>
-      </p>
-    </div>
+    <form
+      @submit.prevent="addTodo"
+    >
+      <div class="field is-grouped mb-5">
+        <p class="control is-expanded">
+          <input 
+            v-model="newTodoContent"
+            class="input" 
+            placeholder="Add a todo" 
+            type="text" 
+          />
+        </p>
+        <p class="control">
+          <button
+            :disabled="!newTodoContent"
+            class="button is-info"
+          >
+            Add 
+          </button>
+        </p>
+      </div>
+    </form>
+
 
     <div v-for="todo in todos" class="card mb-5">
       <div class="card-content">
@@ -19,8 +34,14 @@
               {{ todo.content }}
             </div>
             <div class="column is-5 has-text-right">
-              <button class="button is-light">&check;</button>
-              <button class="button is-danger ml-2">&cross;</button>
+              <button class="button is-light">
+                &check;
+              </button>
+              <button 
+                @click="deleteTodo(todo.id)"
+                class="button is-danger ml-2">
+                &cross;
+              </button>
             </div>
           </div>
         </div>
@@ -33,7 +54,8 @@
 /*
   imports
 */
-import { ref } from "vue";
+import { ref } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 
 /*
   todos
@@ -41,7 +63,7 @@ import { ref } from "vue";
 const todos = ref([
   {
     id: "id1",
-    content: "Resurar mi trasero",
+    content: "Rasurar mi trasero",
     done: false,
   },
   {
@@ -49,11 +71,36 @@ const todos = ref([
     content: "Rasurar la barba",
     done: false,
   }
-]);
+])
+
+/*
+  add todo
+*/
+
+const newTodoContent = ref('')
+
+const addTodo = () => {
+  const newTodo = {
+    id: uuidv4(),
+    content: newTodoContent.value,
+    done: false
+  }
+  todos.value.unshift(newTodo);
+  newTodoContent.value = '';
+}
+
+/*
+deleteTodo
+*/
+
+const deleteTodo = id => {
+  todos.value = todos.value.filter(todo => todo.id !== id)
+}
+
 </script>
 
 <style>
-@import "node_modules\bulma\css\bulma.min.css";
+@import '../node_modules/bulma/css/bulma.min.css';
 
 .brand-todo {
   max-width: 400px;
