@@ -68,7 +68,7 @@
 */
 
 import { ref, onMounted } from 'vue'
-import { collection, onSnapshot, addDoc, doc, deleteDoc } from 'firebase/firestore'
+import { collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
 
 /*
@@ -119,8 +119,8 @@ onMounted(() => {
 
 const newTodoContent = ref('')
 
-const addTodo = async () => {
-  await addDoc(todosCollectionRef, {
+const addTodo = () => {
+  addDoc(todosCollectionRef, {
     content: newTodoContent.value,
     done: false
   })
@@ -141,7 +141,10 @@ const deleteTodo = id => {
 
 const toggleDone = id => {
   const index = todos.value.findIndex(todo => todo.id === id)
-  todos.value[index].done = !todos.value[index].done
+
+  updateDoc(doc(todosCollectionRef, id), {
+    done: !todos.value[index].done
+  });
 }
 
 </script>
