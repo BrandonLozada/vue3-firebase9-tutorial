@@ -148,6 +148,7 @@ const toggleDone = id => {
 @import '../node_modules/bulma/css/bulma.min.css';
 
 .brand-todo {
+  width: 400px;
   max-width: 400px;
   padding: 20px;
   margin: 0 auto;
