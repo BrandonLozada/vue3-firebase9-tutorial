@@ -68,7 +68,11 @@
 */
 
 import { ref, onMounted } from 'vue'
-import { collection, onSnapshot, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore'
+import { 
+  collection, onSnapshot, addDoc, 
+  doc, deleteDoc, updateDoc, 
+  query, orderBy, 
+} from 'firebase/firestore'
 import { db } from '@/firebase'
 
 /*
@@ -76,31 +80,21 @@ import { db } from '@/firebase'
 */
 
 const todosCollectionRef = collection(db, 'todos')
+const todosCollectionQuery = query(todosCollectionRef, orderBy('date', 'desc'));
 
 /*
   todos
 */
 
-const todos = ref([
-  // {
-  //   id: "id1",
-  //   content: "Rasurar mi trasero",
-  //   done: false,
-  // },
-  // {
-  //   id: "id2",
-  //   content: "Rasurar la barba",
-  //   done: true,
-  // }
-])
+const todos = ref([])
 
 /*
   get Todos
 */
 
 onMounted(() => {
-  onSnapshot(todosCollectionRef, (querySnapshot) => {
-    const fbTodos = [];
+  onSnapshot(todosCollectionQuery, (querySnapshot) => {
+    const fbTodos = []
     querySnapshot.forEach((doc) => {
       const todo = {
         id: doc.id,
@@ -122,7 +116,8 @@ const newTodoContent = ref('')
 const addTodo = () => {
   addDoc(todosCollectionRef, {
     content: newTodoContent.value,
-    done: false
+    done: false,
+    date: Date.now()
   })
   newTodoContent.value = ''
 }
@@ -144,7 +139,7 @@ const toggleDone = id => {
 
   updateDoc(doc(todosCollectionRef, id), {
     done: !todos.value[index].done
-  });
+  })
 }
 
 </script>
